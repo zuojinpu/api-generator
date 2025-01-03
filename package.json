@@ -1,0 +1,27 @@
+{
+  "name": "jstoast",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "start": "webpack serve --mode development --open"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@babel/generator": "^7.26.3",
+    "@babel/parser": "^7.26.3",
+    "@babel/types": "^7.26.3",
+    "nunjucks": "^3.2.4",
+    "pinyin": "^4.0.0-alpha.2",
+    "segmentit": "^2.0.3"
+  },
+  "devDependencies": {
+    "html-webpack-plugin": "^5.6.3",
+    "nunjucks-loader": "^3.0.0",
+    "webpack": "^5.97.1",
+    "webpack-cli": "^6.0.1",
+    "webpack-dev-server": "^5.2.0"
+  }
+}
