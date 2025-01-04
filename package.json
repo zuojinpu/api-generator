@@ -2,10 +2,13 @@
   "name": "jstoast",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "module": "dist/index.js",
+  "files": [
+    "dist"
+  ],
   "scripts": {
-    "build": "webpack --mode production",
-    "start": "webpack serve --mode development --open"
+    "build": "webpack --mode production --config webpack.config.js",
+    "start": "webpack serve --mode development  --config webpack.config.js"
   },
   "author": "",
   "license": "ISC",
@@ -13,14 +16,19 @@
     "@babel/generator": "^7.26.3",
     "@babel/parser": "^7.26.3",
     "@babel/types": "^7.26.3",
+    "js-beautify": "^1.15.1",
     "nunjucks": "^3.2.4",
     "pinyin": "^4.0.0-alpha.2",
     "segmentit": "^2.0.3"
   },
   "devDependencies": {
+    "bufferutil": "^4.0.9",
+    "clean-webpack-plugin": "^4.0.0",
     "html-webpack-plugin": "^5.6.3",
     "nunjucks-loader": "^3.0.0",
+    "utf-8-validate": "^5.0.10",
     "webpack": "^5.97.1",
+    "webpack-bundle-analyzer": "^4.10.2",
     "webpack-cli": "^6.0.1",
     "webpack-dev-server": "^5.2.0"
   }

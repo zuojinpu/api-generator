@@ -1,98 +1,15 @@
-import nunjucks from 'nunjucks'
+import nunjucks from 'nunjucks';
 import pinyin from 'pinyin';
-const generatornjk = `
-{% for api in apiList -%}
-/**
-* {{ api.description }}
-*/
-export function {{ api.functionName }}(
-  {%- if api.params.length > 0 %}
-  params
-    {%- if genType === 'ts' -%}
-    : {
-    {%- for param in api.params %}
-    {%- if param.description %}
-    /** {{ param.description }} */
-    {% endif -%}
-    {{ param.name }} {{- "?" if not param.required }}: {{ param.schema.type }},
-    {%- endfor %}
-  }
-    {%- endif -%}
-  ,
-  {%- endif %}
-  
-  {%- if api.query.length > 0 %}
-  query
-    {%- if genType === 'ts' -%}
-    : {
-    {%- for query in api.query %}
-    {%- if query.description %}
-    /** {{ query.description }} */
-    {% endif -%}
-    {{ query.name }} {{- "?" if not query.required }}: {{ query.schema.type }},
-    {%- endfor %}
-  }
-    {%- endif -%}
-  ,
-  {%- endif %}
+// import js_beautify from 'js-beautify';
+import generatornjk from './generator.njk.js';
 
-  {%- if api.body.length > 0 %}
-  body
-    {%- if genType === 'ts' -%}
-    : {
-    {%- for body in api.body %}
-    {%- if body.description %}
-    /** {{ body.description }} */
-    {% endif -%}
-    {{ body.name }} {{- "?" if not body.required }}: {{ body.schema.type }},
-    {%- endfor %}
-  }
-    {%- endif -%}
-  ,
-  {%- endif %}
 
-  {%- if api.headers.length > 0 %}
-  headers
-    {%- if genType === 'ts' -%}
-    : {
-    {%- for header in api.headers %}
-    {%- if header.description %}
-    /** {{ header.description }} */
-    {% endif -%}
-    {{ header.name }} {{- "?" if not header.required }}: {{ header.schema.type }},
-    {%- endfor %}
-  }
-    {%- endif -%}
-  ,
-  {%- endif %}
-) {
-  return axios({
-    method: '{{ api.method }}',
-    {% if api.params.length > 0 -%}
-    url: \`{{ api.path }}\`,
-    {%- else -%}
-    url: '{{ api.path }}',
-    {% endif -%}
-    {%- if api.query.length > 0 -%}
-    params: query,
-    {%- endif %}
-    {%- if api.body.length > 0 -%}
-    data: body,
-    {%- endif %}
-    {%- if api.headers.length > 0 -%}
-    headers: headers,
-    {%- endif %}
-  });
-}
-{% endfor -%}
-`
-
-export function archiveGenerator(openapi) {
-  let apiList = []
+export function apiGenerator(openapi) {
+  const apiMap = new Map()
   Object.keys(openapi.paths).forEach(path => {
     Object.keys(openapi.paths[path]).forEach(method => {
-      const apiSource = openapi.paths[path][method]
-      const params = getParams(apiSource)
+      const apiSource = openapi.paths[path][method];
+      const params = getParams(apiSource);
       const apiItem = { 
         path: getPath(path, params), 
         method,
@@ -102,13 +19,25 @@ export function archiveGenerator(openapi) {
         query: getQuery(apiSource),
         headers: getHeaders(apiSource),
         body: getBody(apiSource),
-       }
-       apiList.push(apiItem)
+      }
+      const apiTag = apiSource.tags[apiSource.tags.length - 1];
+      if (apiMap.get(apiTag)) {
+        apiMap.get(apiTag).apiList.push(apiItem);
+      } else {
+        apiMap.set(apiTag, {
+          tag: apiTag,
+          apiList: [apiItem],
+          apiText: '',
+        })
+      }
     })
   })
-
-  getApiFile(apiList)
-  console.log(apiList);
+  apiMap.forEach((item, key) => {
+    item.apiText = getApiFile(item.apiList);
+  })
+  // console.log(Object.fromEntries(Array.from(apiMap)))
+  // return Object.fromEntries(Array.from(apiMap));
+  return apiMap;
 }
 
 function getPath(path, params) {
@@ -164,9 +93,9 @@ function getBody(api) {
 }
 
 function getApiFile(apiList) {
-  nunjucks.configure({ autoescape: false })
-  const fileStr = nunjucks.renderString(generatornjk, { apiList, genType: 'ts' })
-  console.log(fileStr);
+  // nunjucks.configure({ autoescape: false })
+  const apiText = nunjucks.renderString(generatornjk, { apiList, genType: 'ts' })
+  return apiText
 }
 
 function getFunctionName(summary) {
