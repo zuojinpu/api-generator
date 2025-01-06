@@ -5,3 +5,5 @@ import {
 export function generator(apiList) {
   return apiGenerator(apiList)
 }
+
+generator(openapi)

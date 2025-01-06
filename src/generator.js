@@ -2,6 +2,7 @@ import nunjucks from 'nunjucks';
 import pinyin from 'pinyin';
 // import js_beautify from 'js-beautify';
 import generatornjk from './generator.njk.js';
+import typeGenerator from './typeGenerator.js';
 
 
 export function apiGenerator(openapi) {
@@ -35,13 +36,13 @@ export function apiGenerator(openapi) {
   apiMap.forEach((item, key) => {
     item.apiText = getApiFile(item.apiList);
   })
-  // console.log(Object.fromEntries(Array.from(apiMap)))
+  console.log(Object.fromEntries(Array.from(apiMap)))
   // return Object.fromEntries(Array.from(apiMap));
   return apiMap;
 }
 
 function getPath(path, params) {
-  if (!params.length) {
+  if (!params?.length) {
     return path
   }
   let newPath = path
@@ -59,7 +60,9 @@ function getQuery(api) {
 }
 function getParams(api) {
   if (api.parameters) {
-    return api.parameters.filter(item => item.in === 'path')
+    return api.parameters.filter(item => item.in === 'path').forEach(item => {
+      item.type = typeGenerator(item)
+    })
   }
   return []
 }
@@ -81,7 +84,9 @@ function getBody(api) {
   if (!schema.properties) {
     return []
   }
+  console.log('schema', schema)
   return Object.keys(schema.properties).map(name => ({
+    ...schema.properties[name],
     name,
     in: 'body',
     description: schema.properties[name].description,
@@ -89,11 +94,13 @@ function getBody(api) {
     schema: {
       type: schema.properties[name].type,
     },
+  })).map(item => ({
+    ...item,
+    type: typeGenerator(item),
   }))
 }
 
 function getApiFile(apiList) {
-  // nunjucks.configure({ autoescape: false })
   const apiText = nunjucks.renderString(generatornjk, { apiList, genType: 'ts' })
   return apiText
 }
