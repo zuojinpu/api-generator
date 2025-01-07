@@ -1,5 +1,5 @@
 {
-  "name": "jstoast",
+  "name": "@iszuo/api-generator",
   "version": "1.0.0",
   "description": "",
   "module": "dist/index.js",
@@ -10,8 +10,13 @@
     "build": "webpack --mode production --config webpack.config.js",
     "start": "webpack serve --mode development  --config webpack.config.js"
   },
-  "author": "",
-  "license": "ISC",
+  "author": "zuojinpu",
+  "repository": {
+    "type": "git",
+    "url": "git+git@github.com:zuojinpu/api-generator.git"
+  },
+  "homepage": "https://github.com/zuojinpu/api-generator",
+  "license": "MIT",
   "dependencies": {
     "@babel/generator": "^7.26.3",
     "@babel/parser": "^7.26.3",
