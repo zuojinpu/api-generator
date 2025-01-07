@@ -2,8 +2,6 @@ import openapi from './openapi.json'
 import {
   apiGenerator
 } from './generator'
-export function generator(apiList) {
+export function APIGenerator(apiList) {
   return apiGenerator(apiList)
 }
-
-generator(openapi)
