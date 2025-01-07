@@ -1,11 +1,10 @@
 import nunjucks from 'nunjucks';
 import pinyin from 'pinyin';
 // import js_beautify from 'js-beautify';
-import generatornjk from './generator.njk.js';
 import typeGenerator from './typeGenerator.js';
 
 
-export function apiGenerator(openapi) {
+export function apiGenerator(apiTemplate, openapi, genType) {
   const apiMap = new Map()
   Object.keys(openapi.paths).forEach(path => {
     Object.keys(openapi.paths[path]).forEach(method => {
@@ -34,7 +33,7 @@ export function apiGenerator(openapi) {
     })
   })
   apiMap.forEach((item, key) => {
-    item.apiText = getApiFile(item.apiList);
+    item.apiText = getApiFile(apiTemplate, item.apiList, genType);
   })
   // console.log(Object.fromEntries(Array.from(apiMap)))
   // return Object.fromEntries(Array.from(apiMap));
@@ -90,9 +89,8 @@ function getBody(api) {
   }))
 }
 
-function getApiFile(apiList) {
-  const apiText = nunjucks.renderString(generatornjk, { apiList, genType: 'ts' })
-  console.log(apiText)
+function getApiFile(apiTemplate, apiList, genType) {
+  const apiText = nunjucks.renderString(apiTemplate, { apiList, genType })
   document.body.innerHTML = apiText
   return apiText
 }
