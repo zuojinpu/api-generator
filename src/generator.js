@@ -10,15 +10,15 @@ export function apiGenerator(openapi) {
   Object.keys(openapi.paths).forEach(path => {
     Object.keys(openapi.paths[path]).forEach(method => {
       const apiSource = openapi.paths[path][method];
-      const params = getParams(apiSource);
+      const params = getParams(apiSource, 'path');
       const apiItem = { 
         path: getPath(path, params), 
         method,
         description: apiSource.summary,
         functionName: getFunctionName(apiSource.summary),
         params: params,
-        query: getQuery(apiSource),
-        headers: getHeaders(apiSource),
+        query: getParams(apiSource, 'query'),
+        headers: getParams(apiSource, 'header'),
         body: getBody(apiSource),
       }
       const apiTag = apiSource.tags[apiSource.tags.length - 1];
@@ -36,7 +36,7 @@ export function apiGenerator(openapi) {
   apiMap.forEach((item, key) => {
     item.apiText = getApiFile(item.apiList);
   })
-  console.log(Object.fromEntries(Array.from(apiMap)))
+  // console.log(Object.fromEntries(Array.from(apiMap)))
   // return Object.fromEntries(Array.from(apiMap));
   return apiMap;
 }
@@ -51,25 +51,16 @@ function getPath(path, params) {
   })
   return newPath
 }
-
-function getQuery(api) {
+function getParams(api, position) {
   if (api.parameters) {
-    return api.parameters.filter(item => item.in === 'query')
-  }
-  return []
-}
-function getParams(api) {
-  if (api.parameters) {
-    return api.parameters.filter(item => item.in === 'path').forEach(item => {
-      item.type = typeGenerator(item)
-    })
-  }
-  return []
-}
-
-function getHeaders(api) {
-  if (api.parameters) {
-    return api.parameters.filter(item => item.in === 'header')
+    return api.parameters.filter(item => item.in === position).map(item => ({
+      ...item,
+      schema: {
+        ...item.schema,
+        required: item.required,
+      },
+      type: typeGenerator(item),
+    }))
   }
   return []
 }
@@ -84,14 +75,13 @@ function getBody(api) {
   if (!schema.properties) {
     return []
   }
-  console.log('schema', schema)
   return Object.keys(schema.properties).map(name => ({
     ...schema.properties[name],
     name,
     in: 'body',
     description: schema.properties[name].description,
-    required: schema.required.includes(name),
     schema: {
+      required: schema.required.includes(name),
       type: schema.properties[name].type,
     },
   })).map(item => ({
@@ -102,6 +92,8 @@ function getBody(api) {
 
 function getApiFile(apiList) {
   const apiText = nunjucks.renderString(generatornjk, { apiList, genType: 'ts' })
+  console.log(apiText)
+  document.body.innerHTML = apiText
   return apiText
 }
 

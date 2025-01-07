@@ -31,36 +31,42 @@ function typeGenerator (prop) {
     return 'string'
   }
   if (type === 'array') {
-    console.log('array', prop)
     return typeGeneratorByArray(prop.items)
   }
   if (prop.type === 'object') {
-    console.log('object', prop)
-    return typeGeneratorByObject(prop.items)
+    return typeGeneratorByObject(prop)
   }
-  return prop.type
+  return 'any'
 }
 
 function typeGeneratorByArray(prop) {
-  const types = Object.keys(prop.properties).map(key => {
-    return {
-      name: key,
-      type: typeGenerator(prop.properties[key]),
-      required: prop.required.includes(key)
-    }
-  })
-  return `{${types.map(item => item.name + (item.required ? '' : '?') + ': ' + item.type).join(', ')}}[]`
+  try {
+    const types = Object.keys(prop.properties).map(key => {
+      return {
+        name: key,
+        type: typeGenerator(prop.properties[key]),
+        required: prop.required.includes(key)
+      }
+    })
+    return `{${types.map(item => item.name + (item.required ? '' : '?') + ': ' + item.type).join(', ')}}[]`
+  } catch (error) {
+    return 'any[]'
+  }
 }
 
 function typeGeneratorByObject(prop) {
-  // const types = Object.keys(prop.properties).map(key => {
-  //   return {
-  //     name: key,
-  //     type: typeGenerator(prop.properties[key]),
-  //     required: prop.required.includes(key)
-  //   }
-  // })
-  // return `{${types.map(item => item.name + (item.required ? '' : '?') + ': ' + item.type).join(', ')}}`
+  try {
+    const types = Object.keys(prop.properties).map(key => {
+      return {
+        name: key,
+        type: typeGenerator(prop.properties[key]),
+        required: prop.required.includes(key)
+      }
+    })
+    return `{${types.map(item => item.name + (item.required ? '' : '?') + ': ' + item.type).join(', ')}}`
+  } catch (error) {
+    return '{[key: string]: any}'
+  }
 }
 
 export default typeGenerator;
