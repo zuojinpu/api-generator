@@ -91,7 +91,6 @@ function getBody(api) {
 
 function getApiFile(apiTemplate, apiList, genType) {
   const apiText = nunjucks.renderString(apiTemplate, { apiList, genType })
-  document.body.innerHTML = apiText
   return apiText
 }
 
