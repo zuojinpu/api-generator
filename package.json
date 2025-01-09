@@ -10,7 +10,9 @@
   ],
   "scripts": {
     "build": "webpack --mode production --config webpack.config.js",
-    "start": "webpack serve --mode development  --config webpack.config.js"
+    "start": "webpack serve --mode development  --config webpack.config.js",
+    "patch": "npm version patch",
+    "publish": "npm publish --access public"
   },
   "repository": {
     "type": "git",
