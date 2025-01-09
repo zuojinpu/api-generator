@@ -4,7 +4,7 @@
   "description": "",
   "author": "zuojinpu",
   "private": false,
-  "main": "src/index.js",
+  "module": "src/index.js",
   "files": [
     "src"
   ],
