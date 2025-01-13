@@ -1,17 +1,25 @@
 {
-  "name": "jstoast",
-  "version": "1.0.0",
+  "name": "@zuojinpu/api-generator",
+  "version": "1.0.6",
   "description": "",
-  "module": "dist/index.js",
+  "author": "zuojinpu",
+  "private": false,
+  "main": "dist/index.js",
+  "type": "module",
   "files": [
     "dist"
   ],
   "scripts": {
-    "build": "webpack --mode production --config webpack.config.js",
-    "start": "webpack serve --mode development  --config webpack.config.js"
+    "start": "webpack serve --mode development  --config webpack.config.js",
+    "build": "rollup --config rollup.config.js",
+    "patch": "npm version patch",
+    "publish": "npm publish --access public"
   },
-  "author": "",
-  "license": "ISC",
+  "repository": {
+    "type": "git",
+    "url": "git@github.com:zuojinpu/api-generator.git"
+  },
+  "license": "MIT",
   "dependencies": {
     "@babel/generator": "^7.26.3",
     "@babel/parser": "^7.26.3",
@@ -23,13 +31,8 @@
   },
   "devDependencies": {
     "bufferutil": "^4.0.9",
-    "clean-webpack-plugin": "^4.0.0",
-    "html-webpack-plugin": "^5.6.3",
     "nunjucks-loader": "^3.0.0",
-    "utf-8-validate": "^5.0.10",
-    "webpack": "^5.97.1",
-    "webpack-bundle-analyzer": "^4.10.2",
-    "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.0"
+    "rollup": "^4.30.1",
+    "utf-8-validate": "^5.0.10"
   }
 }

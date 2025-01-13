@@ -1,7 +1,6 @@
-import openapi from './openapi.json'
 import {
   apiGenerator
 } from './generator'
-export function generator(apiList) {
-  return apiGenerator(apiList)
+export function APIGenerator(apiTemplate, openapi, genType = 'ts') {
+  return apiGenerator(apiTemplate, openapi, genType)
 }

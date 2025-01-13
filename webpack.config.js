@@ -1,42 +1,33 @@
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
-const BundleAnalyzerPlugin = require('webpack-bundle-analyzer').BundleAnalyzerPlugin;
+const nodeExternals = require('webpack-node-externals');
 
 module.exports = {
-  entry: './src/index.js', // 入口文件
+  entry: './src/index.js',
   output: {
-    filename: 'index.js', // 输出文件名
-    path: path.resolve(__dirname, 'dist') // 输出路径
+    filename: 'index.js',
+    path: path.resolve(require.main.filename, '/dist'),
   },
   module: {
-    // rules: [
-    //   {
-    //     test: /\.njk$/,
-    //     use: 'nunjucks-loader'
-    //   }
-    // ]
+    rules: [
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              ['@babel/preset-env', {
+                modules: 'commonjs' // 将ES6模块转换为CommonJS模块
+              }]
+            ]
+          }
+        }
+      }
+    ]
   },
-  plugins: [
-    new CleanWebpackPlugin(),
-    new HtmlWebpackPlugin({
-      template: './public/index.html',
-    }),
-    // new BundleAnalyzerPlugin()
-  ],
-  devServer: {
-    port: 9000,
-    compress: false,
-    hot: true,
-    static: {
-      directory: path.join(__dirname, 'public')
-    }
-    // devMiddleware: {
-    //   index: true,
-    //   mimeTypes: { phtml: 'text/html' },
-    //   publicPath: '/publicPathForDevServe',
-    //   serverSideRender: true,
-    //   writeToDisk: true
-    // }
-  }
+  externals: [nodeExternals()],
+  optimization: {
+    minimize: false,
+    minimizer: [],
+  },
 };

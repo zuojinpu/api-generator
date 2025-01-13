@@ -1,23 +1,23 @@
 import nunjucks from 'nunjucks';
 import pinyin from 'pinyin';
 // import js_beautify from 'js-beautify';
-import generatornjk from './generator.njk.js';
+import typeGenerator from './typeGenerator.js';
 
 
-export function apiGenerator(openapi) {
+export function apiGenerator(apiTemplate, openapi, genType) {
   const apiMap = new Map()
   Object.keys(openapi.paths).forEach(path => {
     Object.keys(openapi.paths[path]).forEach(method => {
       const apiSource = openapi.paths[path][method];
-      const params = getParams(apiSource);
+      const params = getParams(apiSource, 'path');
       const apiItem = { 
         path: getPath(path, params), 
         method,
         description: apiSource.summary,
         functionName: getFunctionName(apiSource.summary),
         params: params,
-        query: getQuery(apiSource),
-        headers: getHeaders(apiSource),
+        query: getParams(apiSource, 'query'),
+        headers: getParams(apiSource, 'header'),
         body: getBody(apiSource),
       }
       const apiTag = apiSource.tags[apiSource.tags.length - 1];
@@ -33,15 +33,15 @@ export function apiGenerator(openapi) {
     })
   })
   apiMap.forEach((item, key) => {
-    item.apiText = getApiFile(item.apiList);
+    item.apiText = getApiFile(apiTemplate, item.apiList, genType);
   })
-  // console.log(Object.fromEntries(Array.from(apiMap)))
+  console.log(Object.fromEntries(Array.from(apiMap)))
   // return Object.fromEntries(Array.from(apiMap));
   return apiMap;
 }
 
 function getPath(path, params) {
-  if (!params.length) {
+  if (!params?.length) {
     return path
   }
   let newPath = path
@@ -50,23 +50,16 @@ function getPath(path, params) {
   })
   return newPath
 }
-
-function getQuery(api) {
+function getParams(api, position) {
   if (api.parameters) {
-    return api.parameters.filter(item => item.in === 'query')
-  }
-  return []
-}
-function getParams(api) {
-  if (api.parameters) {
-    return api.parameters.filter(item => item.in === 'path')
-  }
-  return []
-}
-
-function getHeaders(api) {
-  if (api.parameters) {
-    return api.parameters.filter(item => item.in === 'header')
+    return api.parameters.filter(item => item.in === position).map(item => ({
+      ...item,
+      schema: {
+        ...item.schema,
+        required: item.required,
+      },
+      type: typeGenerator(item),
+    }))
   }
   return []
 }
@@ -82,19 +75,22 @@ function getBody(api) {
     return []
   }
   return Object.keys(schema.properties).map(name => ({
+    ...schema.properties[name],
     name,
     in: 'body',
     description: schema.properties[name].description,
-    required: schema.required.includes(name),
     schema: {
+      required: schema.required.includes(name),
       type: schema.properties[name].type,
     },
+  })).map(item => ({
+    ...item,
+    type: typeGenerator(item),
   }))
 }
 
-function getApiFile(apiList) {
-  // nunjucks.configure({ autoescape: false })
-  const apiText = nunjucks.renderString(generatornjk, { apiList, genType: 'ts' })
+function getApiFile(apiTemplate, apiList, genType) {
+  const apiText = nunjucks.renderString(apiTemplate, { apiList, genType })
   return apiText
 }
 
