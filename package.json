@@ -1,19 +1,17 @@
 {
-  "name": "@zuojinpu/api-generator-test01",
+  "name": "@zuojinpu/api-generator-test02",
   "version": "1.0.5",
   "description": "",
   "author": "zuojinpu",
   "private": false,
-  "main": "dist/index.esm.js",
+  "main": "dist/index.js",
+  "type": "module",
   "files": [
     "dist"
   ],
   "scripts": {
     "start": "webpack serve --mode development  --config webpack.config.js",
-    "build2": "webpack --mode production  --config webpack.config.js",
-    "build:node": "webpack --mode production --config webpack/webpack.node.js",
-    "build:browser": "webpack --mode production --config webpack/webpack.browser.js",
-    "build": "npm run build:node && npm run build:browser",
+    "build": "rollup --config rollup.config.js",
     "patch": "npm version patch",
     "publish": "npm publish --access public"
   },
@@ -32,20 +30,9 @@
     "segmentit": "^2.0.3"
   },
   "devDependencies": {
-    "@babel/core": "^7.26.0",
-    "@babel/preset-env": "^7.26.0",
-    "babel-loader": "^9.2.1",
     "bufferutil": "^4.0.9",
-    "clean-webpack-plugin": "^4.0.0",
-    "html-webpack-plugin": "^5.6.3",
     "nunjucks-loader": "^3.0.0",
-    "terser-webpack-plugin": "^5.3.11",
-    "utf-8-validate": "^5.0.10",
-    "webpack": "^5.97.1",
-    "webpack-bundle-analyzer": "^4.10.2",
-    "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.0",
-    "webpack-merge": "^6.0.1",
-    "webpack-node-externals": "^3.0.0"
+    "rollup": "^4.30.1",
+    "utf-8-validate": "^5.0.10"
   }
 }
