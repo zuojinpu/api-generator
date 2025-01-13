@@ -35,7 +35,7 @@ export function apiGenerator(apiTemplate, openapi, genType) {
   apiMap.forEach((item, key) => {
     item.apiText = getApiFile(apiTemplate, item.apiList, genType);
   })
-  // console.log(Object.fromEntries(Array.from(apiMap)))
+  console.log(Object.fromEntries(Array.from(apiMap)))
   // return Object.fromEntries(Array.from(apiMap));
   return apiMap;
 }

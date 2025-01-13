@@ -5,12 +5,7 @@ module.exports = {
   entry: './src/index.js',
   output: {
     filename: 'index.js',
-    path: path.resolve(__dirname, 'dist'),
-    library: {
-      type: 'umd',
-      name: 'MyNpmPackage'
-    },
-    globalObject: 'this'
+    path: path.resolve(require.main.filename, '/dist'),
   },
   module: {
     rules: [
@@ -18,7 +13,14 @@ module.exports = {
         test: /\.js$/,
         exclude: /node_modules/,
         use: {
-          loader: 'babel-loader'
+          loader: 'babel-loader',
+          options: {
+            presets: [
+              ['@babel/preset-env', {
+                modules: 'commonjs' // 将ES6模块转换为CommonJS模块
+              }]
+            ]
+          }
         }
       }
     ]

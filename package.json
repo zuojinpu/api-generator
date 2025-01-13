@@ -1,11 +1,10 @@
 {
-  "name": "@zuojinpu/api-generator",
+  "name": "@zuojinpu/api-generator-test01",
   "version": "1.0.5",
   "description": "",
   "author": "zuojinpu",
   "private": false,
-  "module": "dist/index.js",
-  "main": "dist/index.js",
+  "main": "dist/index.esm.js",
   "files": [
     "dist"
   ],
@@ -14,8 +13,7 @@
     "build2": "webpack --mode production  --config webpack.config.js",
     "build:node": "webpack --mode production --config webpack/webpack.node.js",
     "build:browser": "webpack --mode production --config webpack/webpack.browser.js",
-    "build:umd": "webpack --mode production --config webpack/webpack.umd.js",
-    "build": "npm run build:node && npm run build:umd",
+    "build": "npm run build:node && npm run build:browser",
     "patch": "npm version patch",
     "publish": "npm publish --access public"
   },
